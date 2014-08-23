@@ -12,11 +12,15 @@ impl Input for StdIn {
 	fn next_event(&mut self) -> Event {
 		match self.reader.read_line() {
 			Ok(line) => {
+				debug!("received: {}", line);
 				Event::new(
 					time::now_utc(),
-					line.as_slice().trim_right_chars(&['\r', '\n']).to_string())
+					line.as_slice().trim_right_chars(&['\r', '\n']).to_string()))
 			},
-			Err(e) => fail!("stdin: io error {}", e)
+			Err(e) => {
+				error!("io error: {}", e);
+				fail!("io error. aborting. todo: recovery");
+			}
 		}
 	}
 }
@@ -32,5 +36,6 @@ impl Factory<Box<Input>> for StdInFactory {
 }
 
 pub fn register(r: &mut Registry) {
+	debug!(" registered stdin component");
 	r.add_input("stdin".to_string(), box StdInFactory);
 }

@@ -1,3 +1,6 @@
+#![feature(phase)]
+#[phase(plugin, link)] extern crate log;
+
 use pipeline::{Input, Output, Registry};
 
 mod pipeline;
@@ -5,6 +8,7 @@ mod inputs;
 mod outputs;
 
 fn main() {
+	debug!("Starting logrhythm driver");
 	let r = get_registry();
 
 	let mut inp = r.create_input("stdin").unwrap();
@@ -17,6 +21,8 @@ fn main() {
 }
 
 fn get_registry() -> Registry {
+	debug!("Creating Component Registry");
+	
 	let mut r = Registry::new();
 	inputs::register(&mut r);
 	outputs::register(&mut r);

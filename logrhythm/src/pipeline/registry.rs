@@ -1,33 +1,3 @@
-extern crate time;
-
-use std::collections::HashMap;
-//use std::collections::TreeMap;
-//use std::any::Any;
-
-pub struct Event {
-	pub timestamp: time::Tm,
-	pub message: String,
-	//fields: TreeMap<String, Box<Any>>
-}
-
-impl Event {
-	pub fn new(timestamp: time::Tm, message: String) -> Event {
-		Event {
-			timestamp: timestamp,
-			message: message,
-			//fields: TreeMap::new()
-		}
-	}
-}
-
-pub trait Input {
-	fn next_event(&mut self) -> Event;
-}
-
-pub trait Output {
-	fn receive_event(&mut self, evt: &Event);
-}
-
 pub trait Factory<T> {
 	fn build(&self) -> T;
 }
