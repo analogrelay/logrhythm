@@ -1,16 +1,18 @@
+#![allow(dead_code)]
+
 #![feature(phase)]
 #[phase(plugin, link)] extern crate log;
 
-use pipeline::{Input, Output, Registry};
+use engine::{Input, Output, Registry};
 
-mod pipeline;
+mod engine;
 mod inputs;
 mod outputs;
 
 fn main() {
 	debug!("Starting logrhythm driver");
 	let r = get_registry();
-
+	
 	let mut inp = r.create_input("stdin").unwrap();
 	let mut outp = r.create_output("stdout").unwrap();
 

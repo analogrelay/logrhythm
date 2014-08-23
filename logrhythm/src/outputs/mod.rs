@@ -1,4 +1,4 @@
-use pipeline::Registry;
+use engine::Registry;
 
 mod stdout;
 
