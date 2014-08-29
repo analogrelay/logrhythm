@@ -1,5 +1,6 @@
 extern crate time;
 
+#[deriving(Clone)]
 pub struct Event {
 	pub timestamp: time::Tm,
 	pub message: String,

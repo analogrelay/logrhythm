@@ -3,7 +3,7 @@
 #![feature(phase)]
 #[phase(plugin, link)] extern crate log;
 
-use engine::{Input, Output, Registry};
+use engine::{Registry, PipelineBuilder, run_pipeline};
 
 mod engine;
 mod inputs;
@@ -13,13 +13,12 @@ fn main() {
 	debug!("Starting logrhythm driver");
 	let r = get_registry();
 	
-	let mut inp = r.create_input("stdin").unwrap();
-	let mut outp = r.create_output("stdout").unwrap();
+	let mut builder = box PipelineBuilder::new();
+	builder.add_input(r.create_input("stdin").unwrap());
+	builder.add_output(r.create_output("stdout").unwrap());
 
-	loop {
-		let evt = inp.next_event();
-		outp.receive_event(&evt);
-	}
+	// Create the engine and run it!
+	run_pipeline(builder);
 }
 
 fn get_registry() -> Registry {
