@@ -1,14 +1,11 @@
+use util::Ctor;
 use engine::{Input, Output};
 use std::collections::HashMap;
 use std::ascii::{OwnedAsciiExt, AsciiExt};
 
-pub trait Factory<T> {
-	fn build(&self) -> T;
-}
-
 pub struct Registry {
-	inputs: HashMap<String, Box<Factory<Box<Input>>>>,
-	outputs: HashMap<String, Box<Factory<Box<Output>>>>
+	inputs: HashMap<String, Box<Ctor<Box<Input>>+Send>>,
+	outputs: HashMap<String, Box<Ctor<Box<Output>>+Send>>
 }
 
 impl Registry {
@@ -19,24 +16,24 @@ impl Registry {
 		}
 	}
 
-	pub fn add_input(&mut self, name: String, factory: Box<Factory<Box<Input>>>) {
+	pub fn add_input(&mut self, name: String, factory: Box<Ctor<Box<Input>>+Send>) {
 		self.inputs.insert(name.into_ascii_lower(), factory);
 	}
 
-	pub fn add_output(&mut self, name: String, factory: Box<Factory<Box<Output>>>) {
+	pub fn add_output(&mut self, name: String, factory: Box<Ctor<Box<Output>>+Send>) {
 		self.outputs.insert(name.into_ascii_lower(), factory);
 	}
 
-	pub fn create_input(&self, name: &str) -> Option<Box<Input>> {
+	pub fn get_input(&self, name: &str) -> Option<Box<Ctor<Box<Output>>+Send>> {
 		match self.inputs.find_equiv(&(name.to_ascii_lower())) {
-			Some(factory) => Some(factory.build()),
+			Some(factory) => Some(factory),
 			None => None
 		}
 	}
 
-	pub fn create_output(&self, name: &str) -> Option<Box<Output>> {
+	pub fn get_output(&self, name: &str) -> Option<Box<Ctor<Box<Output>>+Send>> {
 		match self.outputs.find_equiv(&(name.to_ascii_lower())) {
-			Some(factory) => Some(factory.build()),
+			Some(factory) => Some(factory),
 			None => None
 		}
 	}

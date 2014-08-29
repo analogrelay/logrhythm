@@ -1,6 +1,5 @@
 use engine::Event;
-use std::sync::mpsc_queue::Queue;
 
-pub trait Input {
+pub trait Input : Send {
 	fn next_event(&mut self) -> Event;
 }

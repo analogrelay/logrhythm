@@ -1,6 +1,6 @@
 use engine::Registry;
 
-mod stdin;
+pub mod stdin;
 
 pub fn register(r: &mut Registry) {
 	debug!("Registering input components");

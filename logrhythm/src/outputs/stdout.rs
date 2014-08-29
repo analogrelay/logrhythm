@@ -1,7 +1,8 @@
 extern crate time;
 
 use std::io;
-use engine::{Output, Event, Factory, Registry};
+use util::Ctor;
+use engine::{Output, Event, Registry};
 
 pub struct StdOut {
 	writer: Box<io::Writer>
@@ -18,10 +19,11 @@ impl Output for StdOut {
 	}
 }
 
+#[deriving(Clone)]
 struct StdOutFactory;
 
-impl Factory<Box<Output>> for StdOutFactory {
-	fn build(&self) -> Box<Output> {
+impl Ctor<Box<Output>> for StdOutFactory {
+	fn new(&self) -> Box<Output> {
 		box StdOut {
 			writer: box io::stdout()
 		} as Box<Output>

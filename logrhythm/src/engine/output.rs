@@ -1,6 +1,5 @@
 use engine::Event;
-use std::comm::Receiver;
 
-pub trait Output {
+pub trait Output : Send {
 	fn receive_event(&mut self, evt: &Event);
 }

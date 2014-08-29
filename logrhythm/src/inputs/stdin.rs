@@ -2,7 +2,8 @@ extern crate time;
 
 use std::io;
 
-use engine::{Input, Event, Factory, Registry};
+use util::Ctor;
+use engine::{Input, Event, Registry};
 
 pub struct StdIn { 
 	reader: Box<io::Buffer>
@@ -25,10 +26,11 @@ impl Input for StdIn {
 	}
 }
 
+#[deriving(Clone)]
 struct StdInFactory;
 
-impl Factory<Box<Input>> for StdInFactory {
-	fn build(&self) -> Box<Input> {
+impl Ctor<Box<Input>> for StdInFactory {
+	fn new(&self) -> Box<Input> {
 		box StdIn {
 			reader: box io::stdin()
 		} as Box<Input>
