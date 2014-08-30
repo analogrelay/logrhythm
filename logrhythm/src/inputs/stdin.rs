@@ -2,7 +2,6 @@ extern crate time;
 
 use std::io;
 
-use util::Ctor;
 use engine::{Input, Event, Registry};
 
 pub struct StdIn { 
@@ -26,20 +25,15 @@ impl Input for StdIn {
 	}
 }
 
-#[deriving(Clone)]
-struct StdInFactory;
-
-impl Ctor<Box<Input>> for StdInFactory {
-	fn new(&self) -> Box<Input> {
-		box StdIn {
-			reader: box io::stdin()
-		} as Box<Input>
-	}
+fn make_stdin() -> Box<Input> {
+	box StdIn {
+		reader: box io::stdin()
+	} as Box<Input>
 }
 
 pub fn register(r: &mut Registry) {
 	debug!(" registered stdin component");
-	r.add_input("stdin".to_string(), box StdInFactory);
+	r.add_input("stdin".to_string(), make_stdin);
 }
 
 #[cfg(test)]

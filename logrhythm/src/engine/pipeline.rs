@@ -1,15 +1,11 @@
-use util::Ctor;
 use engine::{Input, Output, Event};
-use std::sync::deque::BufferPool;
 use std::sync::mpsc_queue::Queue;
 use std::sync::Arc;
 use std::comm::channel;
 
-//pub static DEFAULT_WORKER_COUNT: int = 4;
-
 pub struct PipelineBuilder {
-	inputs: Vec<Box<Ctor<Box<Input>>+Send>>,
-	outputs: Vec<Box<Ctor<Box<Output>>+Send>>,
+	inputs: Vec<fn() -> Box<Input>>,
+	outputs: Vec<fn() -> Box<Output>>
 }
 
 impl PipelineBuilder {
@@ -20,40 +16,37 @@ impl PipelineBuilder {
 		}
 	}
 
-	pub fn add_input(&mut self, input: Box<Ctor<Box<Input>>+Send>) {
+	pub fn add_input(&mut self, input: fn() -> Box<Input>) {
 		self.inputs.push(input);
 	}
 
-	pub fn add_output(&mut self, output: Box<Ctor<Box<Output>>+Send>) {
+	pub fn add_output(&mut self, output: fn() -> Box<Output>) {
 		self.outputs.push(output);
 	}
 }
 
-pub fn run_pipeline(builder: Box<PipelineBuilder>) {
+pub fn run_pipeline(builder: PipelineBuilder) {
 	info!("Starting pipeline");
-
-	// Move the pipeline into a local
-	let pipeline = *builder;
 
 	// Create queues
 	let input_queue = Arc::new(Queue::new());
 
 	// Spawn tasks to read from the inputs
-	for inp in pipeline.inputs.move_iter() {
+	for &inp in builder.inputs.iter() {
 		let my_queue = input_queue.clone();
 		spawn(proc() {
-			let input = inp.new();
+			let input = inp();
 			run_input_loop(input, my_queue);
 		})
 	}
 
 	// Spawn tasks to write to the outputs
 	let mut output_channels = Vec::new();
-	for outp in pipeline.outputs.move_iter() {
+	for &outp in builder.outputs.iter() {
 		let (tx, rx) = channel();
 		output_channels.push(tx);
 		spawn(proc() {
-			let output = outp.new();
+			let output = outp();
 			run_output_loop(output, rx);
 		})
 	}

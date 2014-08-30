@@ -1,5 +1,5 @@
 use engine::Event;
 
-pub trait Output : Send {
+pub trait Output {
 	fn receive_event(&mut self, evt: &Event);
 }

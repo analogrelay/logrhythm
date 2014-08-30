@@ -8,12 +8,17 @@ use engine::{Registry, PipelineBuilder, run_pipeline};
 mod engine;
 mod inputs;
 mod outputs;
-mod util;
 
 fn main() {
 	debug!("Starting logrhythm driver");
+
 	let r = get_registry();
-	
+	let mut builder = PipelineBuilder::new();
+
+	builder.add_input(r.get_input("stdin").unwrap());
+	builder.add_output(r.get_output("stdout").unwrap());
+
+	run_pipeline(builder);
 }
 
 fn get_registry() -> Registry {

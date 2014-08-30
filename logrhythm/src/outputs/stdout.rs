@@ -1,7 +1,6 @@
 extern crate time;
 
 use std::io;
-use util::Ctor;
 use engine::{Output, Event, Registry};
 
 pub struct StdOut {
@@ -19,20 +18,15 @@ impl Output for StdOut {
 	}
 }
 
-#[deriving(Clone)]
-struct StdOutFactory;
-
-impl Ctor<Box<Output>> for StdOutFactory {
-	fn new(&self) -> Box<Output> {
-		box StdOut {
-			writer: box io::stdout()
-		} as Box<Output>
-	}
+fn make_stdout() -> Box<Output> {
+	box StdOut {
+		writer: box io::stdout()
+	} as Box<Output>
 }
 
 pub fn register(r: &mut Registry) {
 	debug!(" registered stdout component");
-	r.add_output("stdout".to_string(), box StdOutFactory);
+	r.add_output("stdout".to_string(), make_stdout);
 }
 
 #[cfg(test)]
