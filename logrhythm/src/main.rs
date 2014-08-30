@@ -7,6 +7,7 @@
 
 use engine::{Registry, PipelineBuilder, run_pipeline};
 
+mod worker;
 mod engine;
 mod inputs;
 mod outputs;
