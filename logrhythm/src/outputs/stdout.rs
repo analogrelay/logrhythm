@@ -18,16 +18,11 @@ impl Output for StdOut {
 	}
 }
 
-fn make_stdout() -> Box<Output> {
+declare_output!("stdout" {
 	box StdOut {
 		writer: box io::stdout()
 	} as Box<Output>
-}
-
-pub fn register(r: &mut Registry) {
-	debug!(" registered stdout component");
-	r.add_output("stdout".to_string(), make_stdout);
-}
+})
 
 #[cfg(test)]
 mod test {

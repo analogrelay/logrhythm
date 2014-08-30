@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+#![feature(macro_rules)]
+#![feature(trace_macros)]
 #![feature(phase)]
 #[phase(plugin, link)] extern crate log;
 

@@ -25,16 +25,11 @@ impl Input for StdIn {
 	}
 }
 
-fn make_stdin() -> Box<Input> {
+declare_input!("stdin" {
 	box StdIn {
 		reader: box io::stdin()
 	} as Box<Input>
-}
-
-pub fn register(r: &mut Registry) {
-	debug!(" registered stdin component");
-	r.add_input("stdin".to_string(), make_stdin);
-}
+})
 
 #[cfg(test)]
 mod test {
