@@ -4,8 +4,8 @@ use std::sync::Arc;
 use std::comm::channel;
 
 pub struct PipelineBuilder {
-	inputs: Vec<fn() -> Box<Input>>,
-	outputs: Vec<fn() -> Box<Output>>
+	inputs: Vec<fn<'a>() -> Box<Input+'a>>,
+	outputs: Vec<fn<'a>() -> Box<Output+'a>>
 }
 
 impl PipelineBuilder {
@@ -16,11 +16,11 @@ impl PipelineBuilder {
 		}
 	}
 
-	pub fn add_input(&mut self, input: fn() -> Box<Input>) {
+	pub fn add_input(&mut self, input: fn<'a>() -> Box<Input+'a>) {
 		self.inputs.push(input);
 	}
 
-	pub fn add_output(&mut self, output: fn() -> Box<Output>) {
+	pub fn add_output(&mut self, output: fn<'a>() -> Box<Output+'a>) {
 		self.outputs.push(output);
 	}
 }

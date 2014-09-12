@@ -3,8 +3,8 @@ use engine::Registry;
 macro_rules! declare_input(
 	($name:expr $ctor:block) => (
 		pub fn register(r: &mut Registry) {
-			fn make_it() -> Box<Input> $ctor
-
+			fn make_it<'a>() -> Box<Input+'a> $ctor
+			
 			debug!(" registering {} input", $name);
 			r.add_input($name.to_string(), make_it);
 		}

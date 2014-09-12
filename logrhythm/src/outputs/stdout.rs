@@ -3,11 +3,11 @@ extern crate time;
 use std::io;
 use engine::{Output, Event, Registry};
 
-pub struct StdOut {
-	writer: Box<io::Writer>
+pub struct StdOut<'a> {
+	writer: Box<io::Writer+'a>
 }
 
-impl Output for StdOut {
+impl<'a> Output for StdOut<'a> {
 	fn receive_event(&mut self, evt: &Event) {
 		// Format the time
 		debug!("writing event to stdout");
@@ -41,12 +41,12 @@ mod test {
 		let evt = Event::new(timestamp, "test event".to_string());
 
 		// Create the writer
-		let mut testOut = StdOut {
+		let mut test_out = StdOut {
 			writer: box buf.by_ref()
 		};
 
 		// Write the event
-		testOut.receive_event(&evt);
+		test_out.receive_event(&evt);
 
 		// Unwrap the buffer
 		let message = String::from_utf8(buf.unwrap()).unwrap();

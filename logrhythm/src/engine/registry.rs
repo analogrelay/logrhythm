@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use std::ascii::{OwnedAsciiExt, AsciiExt};
 
 pub struct Registry {
-	inputs: HashMap<String, fn() -> Box<Input>>,
-	outputs: HashMap<String, fn() -> Box<Output>>
+	inputs: HashMap<String, fn<'a>() -> Box<Input+'a>>,
+	outputs: HashMap<String, fn<'a>() -> Box<Output+'a>>
 }
 
 impl Registry {
@@ -15,22 +15,22 @@ impl Registry {
 		}
 	}
 
-	pub fn add_input(&mut self, name: String, ctor: fn() -> Box<Input>) {
+	pub fn add_input(&mut self, name: String, ctor: fn<'a>() -> Box<Input+'a>) {
 		self.inputs.insert(name.into_ascii_lower(), ctor);
 	}
 
-	pub fn add_output(&mut self, name: String, ctor: fn() -> Box<Output>) {
+	pub fn add_output(&mut self, name: String, ctor: fn<'a>() -> Box<Output+'a>) {
 		self.outputs.insert(name.into_ascii_lower(), ctor);
 	}
 
-	pub fn get_input(&self, name: &str) -> Option<fn() -> Box<Input>> {
+	pub fn get_input(&self, name: &str) -> Option<fn<'a>() -> Box<Input+'a>> {
 		match self.inputs.find_equiv(&(name.to_ascii_lower())) {
 			Some(&ctor) => Some(ctor),
 			None => None
 		}
 	}
 
-	pub fn get_output(&self, name: &str) -> Option<fn() -> Box<Output>> {
+	pub fn get_output(&self, name: &str) -> Option<fn<'a>() -> Box<Output+'a>> {
 		match self.outputs.find_equiv(&(name.to_ascii_lower())) {
 			Some(&ctor) => Some(ctor),
 			None => None
@@ -74,8 +74,8 @@ mod test {
 		}
 	}
 
-	fn make_input() -> Box<Input> {
-		box TestInput as Box<Input>
+	fn make_input<'a>() -> Box<Input+'a> {
+		box TestInput as Box<Input+'a>
 	}
 
 	struct TestOutput;
@@ -87,7 +87,7 @@ mod test {
 		}
 	}
 
-	fn make_output() -> Box<Output> {
-		box TestOutput as Box<Output>
+	fn make_output<'a>() -> Box<Output+'a> {
+		box TestOutput as Box<Output+'a>
 	}
 }
