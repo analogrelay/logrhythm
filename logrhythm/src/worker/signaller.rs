@@ -6,10 +6,10 @@ pub trait Signaller {
 	fn token(&self) -> SignalToken;
 }
 
-pub fn signaller() -> Box<Signaller+'static> {
+pub fn signaller<'a>() -> Box<Signaller+'a> {
 	box SignallerImpl {
 		signal: Arc::new(AtomicBool::new(false))
-	} as Box<Signaller+'static>
+	} as Box<Signaller>
 }
 
 struct SignallerImpl {
